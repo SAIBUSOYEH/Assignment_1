@@ -1,0 +1,126 @@
+
+'The Greatest Total Stock Volume Analysis
+Sub Stock_Vol_Greatest():
+    Dim Wsheet As Worksheet
+    Dim ticker As String
+    Dim Total_Stock_Vol As Double
+    Dim Summary_Table_Row As Long
+    Dim YrChnge As Double
+    Dim Pcenchnge As Double
+    Dim OpenPrice As Double
+    Dim ClosePrice As Double
+    Dim i, j As Long
+    Dim Great_Inc As Double
+    Dim Great_Dec As Double
+    Dim Grt_Total_Stock_Vol As Double
+    Dim ticker_Great_Inc As String
+    Dim ticker_Great_Dec As String
+    Dim ticker_Grt_Total_Stock_Vol As String
+    
+     For Each Wsheet In ActiveWorkbook.Worksheets
+      Wsheet.Activate
+        j = 2
+        Total_Stock_Vol = 0
+        Summary_Table_Row = 2
+    
+        Wsheet.Range("I1").Value = "Ticker"
+        Wsheet.Range("J1").Value = "Yearly Change"
+        Wsheet.Range("K1").Value = "Percent Change"
+        Wsheet.Range("L1").Value = "Total Stock Value"
+        Wsheet.Range("P1").Value = "Ticker"
+        Wsheet.Range("Q1").Value = "Value"
+        Wsheet.Range("O2").Value = "Greatest % Increase"
+        Wsheet.Range("O3").Value = "Greatest % Decrease"
+        Wsheet.Range("O4").Value = "Greatest Total Volume"
+    
+     'The last Row
+     lastrow = Wsheet.Cells(Rows.Count, 1).End(xlUp).Row
+    
+     'Loop Through Each Year of Stock Data
+     For i = 2 To lastrow
+    
+         'Comparing Each Ticker
+         If Wsheet.Range("A" & i + 1).Value = Wsheet.Range("A" & i).Value Then
+    
+             'Total Volume for Each same Ticker
+             Total_Stock_Vol = Total_Stock_Vol + Wsheet.Range("G" & i).Value
+    
+         Else
+             ticker = Wsheet.Range("A" & i).Value
+    
+             'Calculate Yearly Change
+             OpenPrice = Wsheet.Range("C" & Summary_Table_Row)
+             ClosePrice = Wsheet.Range("F" & i)
+             YrChnge = ClosePrice - OpenPrice
+             
+             'Calculate Percent Change
+             If OpenPrice = 0 Then
+                Pcenchnge = 0
+             Else
+                Pcenchnge = YrChnge / OpenPrice
+             End If
+    
+             Wsheet.Range("I" & j).Value = ticker
+             Wsheet.Range("L" & j).Value = Total_Stock_Vol + Wsheet.Range("G" & i).Value
+             Wsheet.Range("J" & j).Value = YrChnge
+             Wsheet.Range("K" & j).Value = Pcenchnge
+             Wsheet.Range("K" & j).NumberFormat = "0.00%"
+    
+             'Conditional Formating Green For Positive And Red For Negative Yearly Change
+             If Wsheet.Range("J" & j).Value > 0 Then
+                Wsheet.Range("J" & j).Interior.Color = vbGreen
+             Else
+                Wsheet.Range("J" & j).Interior.Color = vbRed
+             End If
+    
+             j = j + 1
+             Total_Stock_Vol = 0
+             Summary_Table_Row = i + 1
+    
+         End If
+     Next i
+     
+     'Calculating for the Greatest % Increase,Decrease and Total Volume For Tricker
+     
+    Great_Inc = Wsheet.Range("K2" & 2).Value
+    Great_Dec = Wsheet.Range("K2" & 2).Value
+    
+    Grt_Total_Stock_Vol = Wsheet.Range("L2" & r).Value
+    ticker_Great_Inc = Wsheet.Range("I2" & r).Value
+    
+    ticker_Great_Dec = Wsheet.Range("I2" & r).Value
+    ticker_Grt_Total_Stock_Vol = Wsheet.Range("I2" & r).Value
+
+    lastrow_Display = Wsheet.Cells(Rows.Count, "I").End(xlUp).Row
+
+    'Finding The Greatest Value Using Loop
+    For r = 2 To lastrow_Display:
+    
+     If Wsheet.Range("K" & r + 1).Value > Great_Inc Then
+        Great_Inc = Wsheet.Range("K" & r + 1).Value
+        ticker_Great_Inc = Wsheet.Range("I" & r + 1).Value
+        
+     ElseIf Wsheet.Range("K" & r + 1).Value < Great_Dec Then
+        Great_Dec = Wsheet.Range("K" & r + 1).Value
+        ticker_Great_Dec = Wsheet.Range("I" & r + 1).Value
+        
+     ElseIf Wsheet.Range("L" & r + 1).Value > Grt_Total_Stock_Vol Then
+        Grt_Total_Stock_Vol = Wsheet.Range("L" & r + 1).Value
+        ticker_Grt_Total_Stock_Vol = Wsheet.Range("I" & r + 1).Value
+        
+     End If
+    Next r
+
+ 
+        Wsheet.Range("P2").Value = ticker_Great_Inc
+        Wsheet.Range("P3").Value = ticker_Great_Dec
+        Wsheet.Range("P4").Value = ticker_Grt_Total_Stock_Vol
+    
+        Wsheet.Range("Q2").Value = Great_Inc
+        Wsheet.Range("Q3").Value = Great_Dec
+        Wsheet.Range("Q4").Value = Grt_Total_Stock_Vol
+        Wsheet.Range("Q2:Q3").NumberFormat = "0.00%"
+        
+    Next Wsheet
+    
+End Sub

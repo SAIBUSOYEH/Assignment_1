@@ -1,0 +1,45 @@
+Sub AnalysingStock():
+
+  Dim Wsheet As Worksheet
+  For Each Wsheet In ActiveWorkbook.Worksheets
+  Wsheet.Activate
+  Dim Ticker As String
+
+  Dim Total_Stock_Vol As Double
+  Total_Stock_Vol = 0
+
+  Dim Summary_Table_Row As Integer
+  Summary_Table_Row = 2
+
+  Wsheet.Range("I1").Value = "Ticker"
+  Wsheet.Range("J1").Value = "Total Stock Vol"
+
+  LastRow = Wsheet.Cells(Rows.Count, 1).End(xlUp).Row
+
+  For i = 2 To LastRow
+
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+
+      Ticker = Cells(i, 1).Value
+
+      Total_Stock_Vol = Total_Stock_Vol + Cells(i, 7).Value
+
+      Wsheet.Range("I" & Summary_Table_Row).Value = Ticker
+
+      Wsheet.Range("J" & Summary_Table_Row).Value = Total_Stock_Vol
+
+      Summary_Table_Row = Summary_Table_Row + 1
+
+      Total_Stock_Vol = 0
+
+    Else
+
+        Total_Stock_Vol = Total_Stock_Vol + Cells(i, 7).Value
+
+    End If
+
+  Next i
+  
+ Next Wsheet
+
+End Sub
